@@ -8,28 +8,7 @@ const birth = ref(null);
 
 const { logout } = auth();
 
-async function checkBirth() {
-    if (user.value?.id) {
-        const { data, error } = await client
-            .from('users')
-            .select('birth')
-            .eq('id', user.value.id)
-            .single();
 
-        if (error) {
-            console.error("Error fetching user data:", error);
-            return;
-        }
-
-        birth.value = data?.birth;
-
-        if (!birth.value) {
-            router.push('/end-register');
-        } else {
-            router.push('/profile');
-        }
-    }
-}
 
 
 </script>

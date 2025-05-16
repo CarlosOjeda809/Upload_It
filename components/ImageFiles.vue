@@ -2,39 +2,33 @@
 import { defineProps } from 'vue';
 
 const props = defineProps({
-    // La lista de archivos de imagen a mostrar
     images: {
         type: Array,
         default: () => []
     },
-    // La información del tipo de archivo "Imágenes"
     fileType: {
         type: Object,
         required: true
     },
-    // La función para formatear el tamaño (definida pero no usada en esta plantilla específica)
     formatSizeFn: {
         type: Function,
         required: true
     },
-    // La función para archivar un archivo
     archiveFileFn: {
         type: Function,
         required: true
     },
-    // La función para eliminar un archivo
     deleteFileFn: {
         type: Function,
         required: true
     },
-    // La función para abrir la previsualización
+
     openPreviewFn: {
         type: Function,
         required: true
     }
 });
 
-// Las props son accesibles directamente en la plantilla con <script setup>
 
 </script>
 
