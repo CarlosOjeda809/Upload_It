@@ -1,7 +1,7 @@
 <script setup>
 const config = useRuntimeConfig();
 
-import { AUTH } from '@/composables/auth'
+import { auth } from '@/composables/auth'
 
 const client = useSupabaseClient()
 const user = useSupabaseUser()

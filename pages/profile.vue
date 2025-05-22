@@ -1,30 +1,27 @@
 <script setup>
 
-import { profile } from '@/composables/formatProfile';
-
-const client = useSupabaseClient();
 const user = useSupabaseUser();
-const users = ref({});
-const isLoading = ref(true);
-const errorMsg = ref(null);
 const router = useRouter();
-
 const {
-  
   formatDate,
-  userData,
-  checkBirth,
-
-} = profile();
+  userData, 
+  isLoading, 
+  errorMsg,  
+  fetchUserProfile, 
+  checkBirthStatus, 
+} = profile(); 
 
 onMounted(async () => {
-  await checkBirth();
-  if (user.value?.id) {
-    await userData();
-  } else {
-    isLoading.value = false;
-    errorMsg.value = 'Usuario no autenticado.';
+  
+  if (user.value) { 
+    const birthStatus = await checkBirthStatus();
+    if (!birthStatus.hasBirth) {
+      router.push('/end-register');
+
+      return; 
+    }
   }
+  await fetchUserProfile();
 
 });
 </script>
@@ -40,7 +37,6 @@ onMounted(async () => {
           <p class="text-pink-700 font-medium text-lg">Cargando tu perfil...</p>
         </div>
       </div>
-
 
       <div v-else-if="errorMsg" class="w-full max-w-md">
         <div class="bg-white bg-opacity-80 backdrop-blur-md rounded-xl shadow-xl p-8 border border-red-100">
@@ -69,8 +65,7 @@ onMounted(async () => {
         </div>
       </div>
 
-
-      <div v-else-if="user" class="w-full max-w-md">
+      <div v-else-if="user && userData" class="w-full max-w-md -mt-16">
         <div class="mb-6 text-center">
           <h1 class="text-4xl font-bold text-white drop-shadow-md">MI PERFIL</h1>
           <p class="text-lg text-white mt-1 opacity-90">Tu información personal</p>
@@ -81,12 +76,12 @@ onMounted(async () => {
           <div class="flex justify-center mb-6">
             <div
               class="w-24 h-24 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg text-white text-3xl font-bold">
-              {{ users?.nombre?.charAt(0)?.toUpperCase() || 'U' }}
+              {{ userData.nombre?.charAt(0)?.toUpperCase() || 'U' }} 
             </div>
           </div>
 
           <h2 class="text-2xl font-bold text-center mb-6 text-pink-600">
-            {{ users?.nombre || 'Usuario' }}
+            {{ userData.nombre || 'Usuario' }}
           </h2>
 
           <div class="space-y-6">
@@ -97,7 +92,7 @@ onMounted(async () => {
                 </div>
                 <div>
                   <div class="text-gray-500 text-sm font-medium">Nombre</div>
-                  <div class="text-gray-800 font-semibold text-lg">{{ users?.nombre || 'No especificado' }}</div>
+                  <div class="text-gray-800 font-semibold text-lg">{{ userData.nombre || 'No especificado' }}</div>
                 </div>
               </div>
             </div>
@@ -109,7 +104,7 @@ onMounted(async () => {
                 </div>
                 <div>
                   <div class="text-gray-500 text-sm font-medium">Email</div>
-                  <div class="text-gray-800 font-semibold">{{ users?.email || 'No especificado' }}</div>
+                  <div class="text-gray-800 font-semibold">{{ userData.email || 'No especificado' }}</div>
                 </div>
               </div>
             </div>
@@ -121,7 +116,7 @@ onMounted(async () => {
                 </div>
                 <div>
                   <div class="text-gray-500 text-sm font-medium">Fecha de nacimiento</div>
-                  <div class="text-gray-800 font-semibold">{{ formatDate(users?.birth) }}</div>
+                  <div class="text-gray-800 font-semibold">{{ formatDate(userData.birth) }}</div>
                 </div>
               </div>
             </div>
@@ -151,7 +146,7 @@ onMounted(async () => {
             </svg>
           </div>
           <h2 class="text-xl font-bold text-gray-700 mb-2">Acceso restringido</h2>
-          <p class="text-gray-600 mb-6">No has iniciado sesión. Por favor, accede a tu cuenta para ver tu perfil.</p>
+          <p class="text-gray-600 mb-6">No has iniciado sesión o no se pudo cargar tu perfil. Por favor, accede a tu cuenta para ver tu perfil.</p>
           <button @click="router.push('/login')"
             class="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold rounded-lg hover:opacity-90 transition duration-300 shadow-md flex items-center justify-center mx-auto">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"

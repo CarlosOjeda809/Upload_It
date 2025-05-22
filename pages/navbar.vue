@@ -8,9 +8,6 @@ const birth = ref(null);
 
 const { logout } = auth();
 
-
-
-
 </script>
 
 <template>

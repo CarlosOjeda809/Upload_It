@@ -4,6 +4,12 @@ export function auth() {
   const client = useSupabaseClient();
   const user = useSupabaseUser();
   const userName = ref('');
+  const isLoading = ref(false);
+  const errorMsg = ref('');
+  const emailData = ref('');
+  const contraseñaData = ref('');
+  const config = useRuntimeConfig();
+  const router = useRouter();
 
   const getUserName = async () => {
     if (user.value) {
