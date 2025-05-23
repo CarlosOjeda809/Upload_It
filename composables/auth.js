@@ -72,14 +72,25 @@ export function auth() {
     }
   }
 
+  const getBaseUrl = () => {
+    if (process.client) {
+      const isLocalhost = window.location.hostname === 'localhost';
+      return isLocalhost
+        ? 'http://localhost:3000'
+        : 'https://uploadit.ojedacarlos.com';
+    }
+    return '';
+  };
 
   const loginConGoogle = async () => {
     isLoading.value = true;
     try {
+      const baseUrl = getBaseUrl();
+
       const { error } = await client.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: config.public.BASE_URL + '/end-register'
+          redirectTo: `${baseUrl}/end-register`
         }
       });
 
@@ -89,13 +100,14 @@ export function auth() {
         return false;
       }
 
-      errorMsg.value = ''
+      errorMsg.value = '';
     } catch (e) {
-      errorMsg.value = 'Error inesperado. Inténtalo de nuevo.'
+      errorMsg.value = 'Error inesperado. Inténtalo de nuevo.';
     } finally {
       isLoading.value = false;
     }
-  }
+  };
+
 
 
   const loginConGithub = async () => {
